@@ -1,15 +1,14 @@
----
-name: issue template
-about: 기본 이슈 템플릿
-title: ''
-labels: ''
-assignees: ''
+## Problem
 
----
+ℹ Please replace this with a summary of the problem you're trying to solve.
 
-## 💡 이슈 내용
-<!-- 이슈에 대한 내용을 설명해주세요. -->
+## Request
 
-## 📝  작업 목록
-<!-- 해야 할 일들을 적어주세요. -->
-- [ ] todo !
+ℹ Please replace this with a summary of the feature you're requesting.
+
+## Value to GradientFlow
+
+ℹ Please explain why this feature would be a great addition to GradientFlow.
+
+ℹ We love new ideas! Tell us how this makes the SDK more powerful for everyone.
+
