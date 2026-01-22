@@ -1,16 +1,14 @@
-## 📌 관련 이슈
-<!-- 관련있는 이슈 번호(#000)을 적어주세요.
-  해당 pull request merge와 함께 이슈를 닫으려면
-  closed #Issue_number를 적어주세요 -->
+## Related Issue
+*Link the issue being closed or related to this PR (e.g., Closes #123).*
 
-## ✨ 이슈 내용
-<!-- 이슈에 대한 설명을 적어주세요 -->
+## Motivation
+*Explain the background of this change and why it's necessary for GradientFlow.*
 
-## ‼️ TODO
-<!-- 해결하지 못했거나 추후 해야할 일에 대한 설명을 적어주세요 -->
+## Modifications
+*Briefly list the technical changes and any new APIs introduced in this PR.*
 
-## 📸 코드 및 스크린샷(선택)
-<!-- 스크린샷이 필요한 과제면 스크린샷을 첨부해주세요 -->
+## Result
+*Describe the expected outcome and provide visual evidence (Screenshots/GIFs) of the changes.*
 
-## 📚 레퍼런스 (또는 새로 알게 된 내용) 혹은 궁금한 사항들
-<!-- 참고할 사항이 있다면 적어주세요 -->
+## Test Plan 
+*Detail the testing steps taken to ensure stability and performance across different environments.*
