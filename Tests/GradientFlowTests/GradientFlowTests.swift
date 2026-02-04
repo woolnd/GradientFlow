@@ -2,11 +2,130 @@ import XCTest
 @testable import GradientFlow
 
 final class GradientFlowTests: XCTestCase {
-    func testExample() throws {
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
 
-        // Defining Test Cases and Test Methods
-        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
+    // MARK: - GradientFlow Entry Point
+
+    @MainActor
+    func test_createLabel_returnsGradientTextLabel() {
+        let label = GradientFlow.createLabel()
+        XCTAssertNotNil(label)
+        XCTAssertTrue(type(of: label) == GradientTextLabel.self)
+    }
+
+    @MainActor
+    func test_createAnimatedLabel_setsTextColorsAndAnimationFlag() {
+        let colors = GradientFlow.ColorPresets.purpleDream
+
+        let label = GradientFlow.createAnimatedLabel(text: "Hello", colors: colors)
+
+        XCTAssertEqual(label.text, "Hello")
+        XCTAssertEqual(label.colors.count, colors.count)
+        XCTAssertEqual(label.colors, colors)
+        XCTAssertTrue(label.isAnimated)
+    }
+
+    // MARK: - Fluent API (Chaining)
+
+    @MainActor
+    func test_fluentAPI_setsProperties() {
+        let label = GradientTextLabel.create()
+            .setText("Rainbow!")
+            .setFontSize(32)
+            .setFontWeight(.semibold)
+            .setGradientDirection(.topToBottom)
+            .setAnimated(false)
+            .setAnimationDirection(.bottomToTop)
+            .setAnimationDuration(2.5)
+
+        XCTAssertEqual(label.text, "Rainbow!")
+        XCTAssertEqual(label.fontSize, 32)
+        XCTAssertEqual(label.fontWeight, .semibold)
+        XCTAssertEqual(label.gradientDirection, .topToBottom)
+        XCTAssertFalse(label.isAnimated)
+        XCTAssertEqual(label.animationDirection, .bottomToTop)
+        XCTAssertEqual(label.animationDuration, 2.5, accuracy: 0.0001)
+    }
+
+    // MARK: - Presets
+
+    @MainActor
+    func test_setColorPreset_appliesColors() {
+        let preset = GradientFlow.ColorPresets.rainbow
+
+        let label = GradientTextLabel.create()
+            .setColorPreset(preset)
+
+        XCTAssertEqual(label.colors, preset)
+    }
+
+    // MARK: - AnimationDirection
+
+    func test_animationDirection_keyPath_isCorrect() {
+        XCTAssertEqual(AnimationDirection.leftToRight.keyPath, "x")
+        XCTAssertEqual(AnimationDirection.rightToLeft.keyPath, "x")
+        XCTAssertEqual(AnimationDirection.topToBottom.keyPath, "y")
+        XCTAssertEqual(AnimationDirection.bottomToTop.keyPath, "y")
+    }
+
+    // MARK: - Gradient Layer / Mask Wiring
+
+    @MainActor
+    func test_layoutSubviews_setsMaskAndGradientFrame() {
+        let label = GradientTextLabel()
+        label.frame = CGRect(x: 0, y: 0, width: 120, height: 40)
+
+        // Trigger a layout pass so layoutSubviews() runs.
+        label.layoutIfNeeded()
+
+        // The view should have a mask layer (CATextLayer) applied.
+        XCTAssertNotNil(label.layer.mask)
+
+        // The gradient layer frame should be non-zero after layout.
+        XCTAssertGreaterThan(label.gradientLayer.frame.width, 0)
+        XCTAssertGreaterThan(label.gradientLayer.frame.height, 0)
+    }
+
+    @MainActor
+    func test_whenAnimatedTrue_animationIsAddedToGradientLayer() {
+        let label = GradientTextLabel()
+        label.frame = CGRect(x: 0, y: 0, width: 120, height: 40)
+        label.isAnimated = true
+
+        // layoutSubviews() should start the animation when isAnimated is true.
+        label.layoutIfNeeded()
+
+        // Verify the animation is registered on the gradient layer.
+        let keys = label.gradientLayer.animationKeys() ?? []
+        XCTAssertTrue(keys.contains("gradientAnimation"))
+    }
+
+    @MainActor
+    func test_whenAnimatedFalse_animationIsRemovedFromGradientLayer() {
+        let label = GradientTextLabel()
+        label.frame = CGRect(x: 0, y: 0, width: 120, height: 40)
+        label.isAnimated = true
+        label.layoutIfNeeded()
+
+        // Turning off animation should remove it from the gradient layer.
+        label.isAnimated = false
+
+        let keys = label.gradientLayer.animationKeys() ?? []
+        XCTAssertFalse(keys.contains("gradientAnimation"))
+    }
+
+    // MARK: - Gradient Direction Start/End Points
+
+    @MainActor
+    func test_gradientDirection_updatesStartEndPoints() {
+        let label = GradientTextLabel()
+        label.frame = CGRect(x: 0, y: 0, width: 100, height: 30)
+
+        label.gradientDirection = .leftToRight
+        XCTAssertEqual(label.gradientLayer.startPoint, CGPoint(x: 0, y: 0.5))
+        XCTAssertEqual(label.gradientLayer.endPoint, CGPoint(x: 1, y: 0.5))
+
+        label.gradientDirection = .topToBottom
+        XCTAssertEqual(label.gradientLayer.startPoint, CGPoint(x: 0.5, y: 0))
+        XCTAssertEqual(label.gradientLayer.endPoint, CGPoint(x: 0.5, y: 1))
     }
 }
